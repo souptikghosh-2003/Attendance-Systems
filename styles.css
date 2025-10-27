@@ -1,0 +1,123 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #e0eaff 0%, #e6e6fa 50%, #d1c4e9 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background 0.5s;
+}
+
+#app {
+    max-width: 900px;
+    margin: 40px auto;
+    background: linear-gradient(135deg, #fff 60%, #f3eaff 100%);
+    padding: 32px;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(120, 80, 180, 0.12);
+    animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    text-align: center;
+    color: #111;
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+    animation: popIn 0.8s;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    80% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.dashboard {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.dashboard select {
+    font-size: 1rem;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #b3c6e0;
+    background: #f3eaff;
+    color: #7c4dff;
+    transition: box-shadow 0.3s;
+}
+.dashboard select:focus {
+    box-shadow: 0 0 0 2px #7c4dff33;
+}
+
+.timetable-setup, .attendance {
+    margin-bottom: 32px;
+    animation: fadeIn 1.2s;
+}
+.timetable-entry, .attendance-entry {
+    background: linear-gradient(90deg, #f3eaff 60%, #e0eaff 100%);
+    border: 1px solid #dbe6f6;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(120, 80, 180, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.timetable-entry:hover, .attendance-entry:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(120, 80, 180, 0.18);
+}
+button {
+    background: linear-gradient(90deg, #7c4dff 60%, #b39ddb 100%);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(120, 80, 180, 0.08);
+    transition: background 0.3s, transform 0.2s;
+}
+button:hover {
+    background: linear-gradient(90deg, #b39ddb 60%, #7c4dff 100%);
+    transform: scale(1.08);
+}
+select, input[type="text"] {
+    padding: 8px;
+    margin-right: 8px;
+    border-radius: 8px;
+    border: 1px solid #b3c6e0;
+    font-size: 1rem;
+    background: #f3eaff;
+    color: #7c4dff;
+    transition: box-shadow 0.3s;
+}
+input[type="text"]:focus {
+    box-shadow: 0 0 0 2px #7c4dff33;
+}
+form {
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+#notifications {
+    animation: fadeIn 0.7s;
+    background: linear-gradient(90deg, #e6e6fa 60%, #fff 100%);
+    color: #7c4dff;
+}
+#analytics {
+    animation: fadeIn 1.2s;
+    background: linear-gradient(90deg, #f3eaff 60%, #fff 100%);
+    color: #7c4dff;
+}
