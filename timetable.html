@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timetable · Print</title>
+  <style>
+    :root { --border:#d1d5db; --muted:#6b7280; --ink:#111827; }
+    body { margin:16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--ink); }
+    .toolbar { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .toolbar .left { color: var(--muted); font-size:14px; }
+    .btn { border:1px solid var(--border); background:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    .btn.primary { background:#111827; color:#fff; border-color:#111827; }
+    .tt-board { display:grid; grid-template-columns: 120px repeat(5, 1fr); gap:8px; }
+    .tt-time, .tt-cell { border:1px solid var(--border); border-radius:10px; padding:10px; min-height:70px; background:#fff; }
+    .tt-time { color: var(--muted); display:flex; align-items:center; justify-content:center; font-weight:600; }
+    .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#f9fafb; }
+    @media print {
+      @page { size: A4 landscape; margin: 12mm; }
+      .toolbar { display:none !important; }
+      body { margin:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="left">
+      <strong>Department:</strong> CSE · <strong>Semester:</strong> 4 · <strong>Week:</strong> 03–07 Feb
+    </div>
+    <div class="right">
+      <button class="btn" onclick="window.location.href='index.html'">Home</button>
+      <button class="btn primary" id="printBtn">Print Timetable</button>
+    </div>
+  </div>
+
+  <div class="tt-board" id="ttBoard">
+    <div class="tt-time"></div>
+    <div class="tt-time">Mon</div><div class="tt-time">Tue</div><div class="tt-time">Wed</div><div class="tt-time">Thu</div><div class="tt-time">Fri</div>
+
+    <div class="tt-time">09:00</div>
+    <div class="tt-cell"><span class="pill">DSA · B201</span></div><div class="tt-cell"></div><div class="tt-cell"><span class="pill">OS Lab · L1</span></div><div class="tt-cell"></div><div class="tt-cell"><span class="pill">Maths · A105</span></div>
+
+    <div class="tt-time">10:00</div>
+    <div class="tt-cell"></div><div class="tt-cell"><span class="pill">DBMS · B202</span></div><div class="tt-cell"></div><div class="tt-cell"><span class="pill">Networks · B103</span></div><div class="tt-cell"></div>
+
+    <div class="tt-time">11:00</div>
+    <div class="tt-cell"></div><div class="tt-cell"></div><div class="tt-cell"></div><div class="tt-cell"><span class="pill">OS Lab · L1</span></div><div class="tt-cell"></div>
+  </div>
+
+  <script>
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+  </script>
+</body>
+</html>
