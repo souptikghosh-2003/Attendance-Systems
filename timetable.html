@@ -2,285 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timetable · Create & Print</title>
+  <title>Timetable · Print</title>
   <style>
-    :root { --border:#d1d5db; --muted:#6b7280; --ink:#111827; --bg:#ffffff; --pill:#f9fafb; --primary:#111827; }
-    body { margin:16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--ink); background: var(--bg); }
-    h2 { margin: 0 0 8px; }
-    .row { display:flex; gap:8px; flex-wrap:wrap; }
+    :root { --border:#d1d5db; --muted:#6b7280; --ink:#111827; }
+    body { margin:16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--ink); }
     .toolbar { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .toolbar .left { color: var(--muted); font-size:14px; }
     .btn { border:1px solid var(--border); background:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; }
-    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
-    .btn.ghost { background:#fff; color:var(--ink); }
-    .input, select { border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:14px; background:#fff; }
-    .panel { border:1px solid var(--border); border-radius:12px; padding:12px; background:#fff; }
-    .grid { display:grid; gap:8px; }
+    .btn.primary { background:#111827; color:#fff; border-color:#111827; }
     .tt-board { display:grid; grid-template-columns: 120px repeat(5, 1fr); gap:8px; }
     .tt-time, .tt-cell { border:1px solid var(--border); border-radius:10px; padding:10px; min-height:70px; background:#fff; }
     .tt-time { color: var(--muted); display:flex; align-items:center; justify-content:center; font-weight:600; }
-    .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:var(--pill); }
-    .list { margin-top:8px; border-top:1px solid var(--border); }
-    .list .item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:14px; }
-    .item .meta { color: var(--muted); }
-    .spacer { flex:1; }
-    .hidden { display:none; }
+    .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#f9fafb; }
     @media print {
       @page { size: A4 landscape; margin: 12mm; }
-      .toolbar, .panel.create { display:none !important; }
+      .toolbar { display:none !important; }
       body { margin:0; }
     }
   </style>
 </head>
 <body>
   <div class="toolbar">
-    <div class="left">
-      <strong>Department:</strong>
-      <input id="dept" class="input" value="CSE" style="width:120px" />
-      <strong>Semester:</strong>
-      <input id="sem" class="input" value="4" style="width:64px" />
-      <strong>Week:</strong>
-      <input id="week" class="input" value="03–07 Feb" style="width:140px" />
-    </div>
-    <div class="right row">
-      <label class="btn ghost" for="fileInput">Load JSON</label>
-      <input id="fileInput" type="file" accept="application/json" class="hidden" />
-      <button class="btn ghost" id="saveJsonBtn">Save JSON</button>
-      <button class="btn ghost" id="clearBtn">Clear</button>
-      <button class="btn primary" id="printBtn">Print</button>
+    <div style="color:#6b7280">Department: CSE · Semester: 4 · Week: 03–07 Feb</div>
+    <div>
+      <button class="btn" onclick="location.href='/'">Home</button>
+      <button class="btn primary" onclick="window.print()">Print Timetable</button>
     </div>
   </div>
 
-  <div class="panel create">
-    <h2>Create Timetable</h2>
-    <div class="row">
-      <label>Day
-        <select id="day" class="input">
-          <option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option>
-        </select>
-      </label>
-      <label>Start
-        <input id="start" class="input" type="time" value="09:00" />
-      </label>
-      <label>End
-        <input id="end" class="input" type="time" value="10:00" />
-      </label>
-      <label>Subject
-        <input id="subject" class="input" placeholder="DSA - LEC" />
-      </label>
-      <label>Room
-        <input id="room" class="input" placeholder="B201" />
-      </label>
-      <label>Faculty
-        <input id="faculty" class="input" placeholder="Prof. Rao" />
-      </label>
-      <button id="addBtn" class="btn primary">Add</button>
-    </div>
-    <div class="list" id="entriesList"></div>
+  <div class="tt-board">
+    <div class="tt-time"></div>
+    <div class="tt-time">Mon</div><div class="tt-time">Tue</div><div class="tt-time">Wed</div><div class="tt-time">Thu</div><div class="tt-time">Fri</div>
+
+    <div class="tt-time">09:00</div>
+    <div class="tt-cell"><span class="pill">DSA · B201</span></div><div class="tt-cell"></div>
+    <div class="tt-cell"><span class="pill">OS Lab · L1</span></div><div class="tt-cell"></div>
+    <div class="tt-cell"><span class="pill">Maths · A105</span></div>
+
+    <div class="tt-time">10:00</div>
+    <div class="tt-cell"></div><div class="tt-cell"><span class="pill">DBMS · B202</span></div>
+    <div class="tt-cell"></div><div class="tt-cell"><span class="pill">Networks · B103</span></div>
+    <div class="tt-cell"></div>
   </div>
-
-  <div class="panel" style="margin-top:12px;">
-    <h2 style="margin-bottom:8px;">Preview</h2>
-    <div class="tt-board" id="ttBoard"></div>
-  </div>
-
-  <script>
-    // Data shape: { meta: {dept, sem, week}, entries: [{ day, start, end, subject, room, faculty }] }
-    const STORE_KEY = 'ta_timetable_v1';
-    const days = ['Mon','Tue','Wed','Thu','Fri'];
-
-    const state = {
-      meta: { dept: 'CSE', sem: '4', week: '03–07 Feb' },
-      entries: []
-    };
-
-    const el = (id) => document.getElementById(id);
-
-    function loadFromLocal() {
-      try {
-        const raw = localStorage.getItem(STORE_KEY);
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        if (data && Array.isArray(data.entries)) {
-          state.meta = data.meta || state.meta;
-          state.entries = data.entries;
-        }
-      } catch {}
-    }
-
-    function saveToLocal() {
-      localStorage.setItem(STORE_KEY, JSON.stringify(state));
-    }
-
-    function timeKey(t) { return t; } // "HH:MM" as key
-
-    function computeTimeAxis(entries) {
-      const set = new Set();
-      for (const e of entries) {
-        set.add(e.start);
-        set.add(e.end);
-      }
-      // fallback defaults if empty
-      if (set.size === 0) return ['09:00','10:00','11:00','12:00','13:00','14:00'];
-      return Array.from(set).sort();
-    }
-
-    function renderGrid() {
-      // sync meta inputs
-      el('dept').value = state.meta.dept;
-      el('sem').value = state.meta.sem;
-      el('week').value = state.meta.week;
-
-      // render entries list
-      const entriesList = el('entriesList');
-      entriesList.innerHTML = '';
-      state.entries
-        .slice()
-        .sort((a,b) => days.indexOf(a.day)-days.indexOf(b.day) || a.start.localeCompare(b.start))
-        .forEach((e, idx) => {
-          const row = document.createElement('div');
-          row.className = 'item';
-          row.innerHTML = `
-            <div>
-              <strong>${e.day}</strong> ${e.start}–${e.end} · ${e.subject}
-              <span class="meta">· Room ${e.room} · ${e.faculty}</span>
-            </div>
-            <div class="row">
-              <button class="btn ghost" data-i="${idx}" data-action="del">Delete</button>
-            </div>
-          `;
-          entriesList.appendChild(row);
-        });
-
-      // grid render
-      const board = el('ttBoard');
-      board.innerHTML = '';
-      // header row
-      const blank = document.createElement('div');
-      blank.className = 'tt-time';
-      board.appendChild(blank);
-      for (const d of days) {
-        const hd = document.createElement('div');
-        hd.className = 'tt-time';
-        hd.textContent = d;
-        board.appendChild(hd);
-      }
-
-      const ticks = computeTimeAxis(state.entries);
-      for (const t of ticks) {
-        const timeCell = document.createElement('div');
-        timeCell.className = 'tt-time';
-        timeCell.textContent = t;
-        board.appendChild(timeCell);
-
-        for (const d of days) {
-          const cell = document.createElement('div');
-          cell.className = 'tt-cell';
-          // find entries matching this time start
-          const matches = state.entries.filter(e => e.day === d && e.start === t);
-          if (matches.length) {
-            cell.innerHTML = matches.map(e =>
-              `<span class="pill">${e.subject} · ${e.room}<br/><span class="meta" style="color:#6b7280">${e.faculty}</span></span>`
-            ).join('<br/>');
-          }
-          board.appendChild(cell);
-        }
-      }
-    }
-
-    function addEntry() {
-      const day = el('day').value.trim();
-      const start = el('start').value;
-      const end = el('end').value;
-      const subject = el('subject').value.trim();
-      const room = el('room').value.trim();
-      const faculty = el('faculty').value.trim();
-      if (!day || !start || !end || !subject) return;
-      state.entries.push({ day, start, end, subject, room, faculty });
-      saveToLocal();
-      renderGrid();
-      el('subject').value = '';
-      el('room').value = '';
-      el('faculty').value = '';
-    }
-
-    function attachHandlers() {
-      el('addBtn').addEventListener('click', addEntry);
-      el('entriesList').addEventListener('click', (ev) => {
-        const btn = ev.target.closest('button');
-        if (!btn) return;
-        if (btn.dataset.action === 'del') {
-          const i = Number(btn.dataset.i);
-          if (!Number.isNaN(i)) {
-            state.entries.splice(i,1);
-            saveToLocal();
-            renderGrid();
-          }
-        }
-      });
-      el('printBtn').addEventListener('click', () => window.print());
-      el('clearBtn').addEventListener('click', () => {
-        if (confirm('Clear current timetable?')) {
-          state.entries = [];
-          saveToLocal();
-          renderGrid();
-        }
-      });
-      el('dept').addEventListener('input', (e) => { state.meta.dept = e.target.value; saveToLocal(); });
-      el('sem').addEventListener('input', (e) => { state.meta.sem = e.target.value; saveToLocal(); });
-      el('week').addEventListener('input', (e) => { state.meta.week = e.target.value; saveToLocal(); });
-
-      // Save JSON (download)
-      el('saveJsonBtn').addEventListener('click', () => {
-        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'timetable.json';
-        a.click();
-        URL.revokeObjectURL(a.href);
-      });
-
-      // Load JSON (file picker)
-      el('fileInput').addEventListener('change', async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        try {
-          const txt = await file.text();
-          const data = JSON.parse(txt);
-          if (!Array.isArray(data.entries)) throw new Error('Invalid file');
-          state.meta = data.meta || state.meta;
-          state.entries = data.entries;
-          saveToLocal();
-          renderGrid();
-        } catch {
-          alert('Invalid timetable JSON.');
-        } finally {
-          e.target.value = '';
-        }
-      });
-    }
-
-    // Try fetch timetable.json if present at repo root (optional)
-    async function tryLoadExternal() {
-      try {
-        const res = await fetch('./timetable.json', { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data.entries)) {
-            state.meta = data.meta || state.meta;
-            state.entries = data.entries;
-            saveToLocal();
-          }
-        }
-      } catch {}
-    }
-
-    (async function init() {
-      loadFromLocal();
-      await tryLoadExternal();
-      attachHandlers();
-      renderGrid();
-    })();
-  </script>
 </body>
 </html>
