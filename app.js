@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <input type="text" placeholder="Classroom" name="classroom" required />
                 <input type="text" placeholder="Time Slot" name="timeslot" required />
                 <input type="text" placeholder="Student Group" name="group" required />
-                <button type="submit">Add Entry</button>
+                <button type="submit" id="addBtn">Add Entry</button>
             </form>
+            <div style="width:100%; display:flex; justify-content:center; margin:12px 0 0;">
+                <button type="button" id="printLandingBtn" style="width:180px;">Print Timetable</button>
+            </div>
             <div id="timetableList"></div>
         </div>
         <div class="attendance">
@@ -44,10 +47,16 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         timetable.push(entry);
         updateTimetableList();
+        updateAttendanceList();
+        showAttendanceAnalytics();
         form.reset();
     });
 
-    // Add entry animation for timetable and attendance
+    // Print Timetable (landing) -> goes to printable page
+    document.getElementById('printLandingBtn').addEventListener('click', () => {
+        window.location.href = '/timetable.html';
+    });
+
     function updateTimetableList() {
         const list = document.getElementById('timetableList');
         list.innerHTML = timetable.map((t, i) => `
@@ -61,9 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.removeTimetableEntry = function(idx) {
         timetable.splice(idx, 1);
         updateTimetableList();
+        updateAttendanceList();
+        checkNotifications();
+        showAttendanceAnalytics();
     };
 
-    // Attendance simulation
     function updateAttendanceList() {
         const list = document.getElementById('attendanceList');
         list.innerHTML = timetable.map((t, i) => `
@@ -78,9 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.toggleAttendance = function(idx) {
         attendance[idx] = !attendance[idx];
         updateAttendanceList();
+        checkNotifications();
+        showAttendanceAnalytics();
     };
 
-    // Smart notifications for attendance
     function checkNotifications() {
         const notifications = [];
         timetable.forEach((t, i) => {
@@ -109,21 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => notif.remove(), 5000);
     }
 
-    // Call notification check after attendance toggle
-    const originalToggleAttendance = window.toggleAttendance;
-    window.toggleAttendance = function(idx) {
-        originalToggleAttendance(idx);
-        checkNotifications();
-    };
-
-    // Call notification check after timetable changes
-    const originalRemoveTimetableEntry = window.removeTimetableEntry;
-    window.removeTimetableEntry = function(idx) {
-        originalRemoveTimetableEntry(idx);
-        checkNotifications();
-    };
-
-    // Attendance analytics (mocked)
     function showAttendanceAnalytics() {
         const total = timetable.length;
         const present = attendance.filter(Boolean).length;
@@ -145,14 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
             Absent: ${absent}<br>
             Attendance Rate: ${total ? ((present/total)*100).toFixed(1) : 0}%`;
     }
-
-    // Call analytics after attendance toggle
-    const originalToggleAttendanceAnalytics = window.toggleAttendance;
-    window.toggleAttendance = function(idx) {
-        originalToggleAttendanceAnalytics(idx);
-        checkNotifications();
-        showAttendanceAnalytics();
-    };
 
     // Initial render
     updateTimetableList();
