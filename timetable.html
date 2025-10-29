@@ -285,5 +285,34 @@
       renderGrid();
     })();
   </script>
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const addBtn = document.getElementById('addBtn');
+    if (!addBtn) return;
+
+    // Create the row under the same container as the Add button
+    const printRow = document.createElement('div');
+    printRow.className = 'row';
+    printRow.style.marginTop = '14px';
+    printRow.innerHTML = `
+      <button type="button" class="btn primary" id="printBtn" style="width:180px;">Print Timetable</button>
+    `;
+
+    // Insert exactly below the Add button's row
+    const parentRow = addBtn.closest('.row');
+    if (parentRow) {
+      parentRow.insertAdjacentElement('afterend', printRow);
+    } else {
+      // Fallback: put it right after the Add button
+      addBtn.insertAdjacentElement('afterend', printRow);
+    }
+
+    // Wire up click → print
+    const printBtn = document.getElementById('printBtn');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => window.print());
+    }
+  });
+</script>
 </body>
 </html>
